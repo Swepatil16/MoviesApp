@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React,{createContext, useState,useEffect} from 'react';
+import Movies from './Movies';
 
+
+export const MoviesContext = createContext();
 function App() {
+  const [shows,setShows] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://api.tvmaze.com/search/shows?q=hero');
+        const data = await response.json();
+        setShows(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <MoviesContext.Provider value={{ shows }}>
+      <>
+        <Movies />
+      </>
+     </MoviesContext.Provider>
   );
 }
 
